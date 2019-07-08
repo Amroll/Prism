@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using Prism.Navigation;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace HelloWorld.Views
 {
-    public partial class MyMasterDetail : MasterDetailPage
+    [XamlCompilation(XamlCompilationOptions.Skip)]
+    public partial class MyMasterDetail : IMasterDetailPageOptions
     {
         public MyMasterDetail()
         {
             InitializeComponent();
-
-            //Detail = new ViewA();
         }
+
+        public bool IsPresentedAfterNavigation => Device.Idiom != TargetIdiom.Phone;
     }
 }

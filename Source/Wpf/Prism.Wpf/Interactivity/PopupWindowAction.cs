@@ -6,12 +6,14 @@ using Prism.Interactivity.InteractionRequest;
 using System;
 using System.Windows;
 using System.Windows.Interactivity;
+using CommonServiceLocator;
 
 namespace Prism.Interactivity
 {
     /// <summary>
     /// Shows a popup window in response to an <see cref="InteractionRequest"/> being raised.
     /// </summary>
+    [Obsolete("Please use the new IDialogService for an improved dialog experience.")]
     public class PopupWindowAction : TriggerAction<FrameworkElement>
     {
         /// <summary>
@@ -21,6 +23,16 @@ namespace Prism.Interactivity
             DependencyProperty.Register(
                 "WindowContent",
                 typeof(FrameworkElement),
+                typeof(PopupWindowAction),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// The type of content of the child window to display as part of the popup.
+        /// </summary>
+        public static readonly DependencyProperty WindowContentTypeProperty =
+            DependencyProperty.Register(
+                "WindowContentType",
+                typeof(Type),
                 typeof(PopupWindowAction),
                 new PropertyMetadata(null));
 
@@ -71,6 +83,15 @@ namespace Prism.Interactivity
         {
             get { return (FrameworkElement)GetValue(WindowContentProperty); }
             set { SetValue(WindowContentProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the type of content of the window.
+        /// </summary>
+        public Type WindowContentType
+        {
+            get { return (Type)GetValue(WindowContentTypeProperty); }
+            set { SetValue(WindowContentTypeProperty, value); }
         }
 
         /// <summary>
@@ -205,7 +226,7 @@ namespace Prism.Interactivity
         {
             Window wrapperWindow;
 
-            if (this.WindowContent != null)
+            if (this.WindowContent != null || this.WindowContentType != null)
             {
                 wrapperWindow = CreateWindow();
 
@@ -239,20 +260,25 @@ namespace Prism.Interactivity
 
         /// <summary>
         /// Checks if the WindowContent or its DataContext implements <see cref="IInteractionRequestAware"/>.
-        /// If so, it sets the corresponding value.
-        /// Also, if WindowContent does not have a RegionManager attached, it creates a new scoped RegionManager for it.
+        /// If so, it sets the corresponding values.
         /// </summary>
         /// <param name="notification">The notification to be set as a DataContext in the HostWindow.</param>
         /// <param name="wrapperWindow">The HostWindow</param>
         protected virtual void PrepareContentForWindow(INotification notification, Window wrapperWindow)
         {
-            if (this.WindowContent == null)
+            if (this.WindowContent != null)
+            {
+                // We set the WindowContent as the content of the window. 
+                wrapperWindow.Content = this.WindowContent;
+            }
+            else if (this.WindowContentType != null)
+            {
+                wrapperWindow.Content = ServiceLocator.Current.GetInstance(this.WindowContentType);
+            }
+            else
             {
                 return;
             }
-
-            // We set the WindowContent as the content of the window. 
-            wrapperWindow.Content = this.WindowContent;
 
             Action<IInteractionRequestAware> setNotificationAndClose = (iira) =>
             {
@@ -260,7 +286,7 @@ namespace Prism.Interactivity
                 iira.FinishInteraction = () => wrapperWindow.Close();
             };
 
-            MvvmHelpers.ViewAndViewModelAction(this.WindowContent, setNotificationAndClose);
+            MvvmHelpers.ViewAndViewModelAction(wrapperWindow.Content, setNotificationAndClose);
         }
 
         /// <summary>
@@ -278,7 +304,7 @@ namespace Prism.Interactivity
         /// </summary>
         /// <param name="notification">The INotification or IConfirmation parameter to show.</param>
         /// <returns></returns>
-        protected Window CreateDefaultWindow(INotification notification)
+        protected virtual Window CreateDefaultWindow(INotification notification)
         {
             Window window = null;
 

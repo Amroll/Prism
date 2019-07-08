@@ -1,21 +1,16 @@
-﻿using System.Resources;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("Prism.Forms")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Prism")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-[assembly: NeutralResourcesLanguage("en")]
+[assembly: InternalsVisibleTo("Prism.Forms.Tests")]
+[assembly: InternalsVisibleTo("Prism.Autofac.Forms.Tests")]
+[assembly: InternalsVisibleTo("Prism.DryIoc.Forms.Tests")]
+[assembly: InternalsVisibleTo("Prism.Unity.Forms.Tests")]
 
-[assembly: AssemblyVersion("6.1")]
-[assembly: AssemblyFileVersion("6.1.0")]
-[assembly: AssemblyInformationalVersion("6.1.0-pre4")]
+[assembly: Xamarin.Forms.Internals.Preserve(AllMembers = true)]
+
+[assembly: Xamarin.Forms.XmlnsDefinition("http://prismlibrary.com", "Prism.Behaviors")]
+[assembly: Xamarin.Forms.XmlnsDefinition("http://prismlibrary.com", "Prism.Ioc")]
+[assembly: Xamarin.Forms.XmlnsDefinition("http://prismlibrary.com", "Prism.Modularity")]
+[assembly: Xamarin.Forms.XmlnsDefinition("http://prismlibrary.com", "Prism.Mvvm")]
+[assembly: Xamarin.Forms.XmlnsDefinition("http://prismlibrary.com", "Prism.Navigation.Xaml")]
+[assembly: Xamarin.Forms.XmlnsDefinition("http://prismlibrary.com", "Prism.Services.Dialogs.Xaml")]
+[assembly: Xamarin.Forms.XmlnsDefinition("http://prismlibrary.com", "Prism.Xaml")]
